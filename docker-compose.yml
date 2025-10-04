@@ -1,0 +1,35 @@
+services:
+  mongodb:
+    image: wasiqali22/f-s_mongodb:v1
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    ports:
+      - "27017:27017"
+    networks:
+      - fullstack-chatapp
+
+  backend:
+    image: wasiqali22/f-s_backend:v1
+    container_name: full-stack_backend
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongoadmin:secret@mongodb:27017/dbname?authSource=admin
+      - JWT_SECRET=your_jwt_secret
+      - PORT=5001
+    depends_on:
+      - mongodb
+    networks:
+      - fullstack-chatapp
+
+  frontend:
+    image: wasiqali22/f-s_frontend:v1
+    container_name: full-stack_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - fullstack-chatapp
